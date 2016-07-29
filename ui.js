@@ -26,7 +26,10 @@ var ui = {
 		get: document.getElementById('get')
 	},
 	autoSelect: document.getElementById('auto-select'),
-    armPosition: document.getElementById('arm-position')
+    theme: {
+        select: document.getElementById('theme-select'),
+        link: document.getElementById('theme-link')
+    }
 };
 
 // Sets function to be called on NetworkTables connect. Commented out because it's usually not necessary.
@@ -64,20 +67,6 @@ function onValueChanged(key, value, isNew) {
 			break;
 			// The following case is an example, for a robot with an arm at the front.
 			// Info on the actual robot that this works with can be seen at thebluealliance.com/team/1418/2016.
-		case '/SmartDashboard/arm/encoder':
-			// 0 is all the way back, 1200 is 45 degrees forward. We don't want it going past that.
-			if (value > 1140) {
-				value = 1140;
-			} else if (value < 0) {
-				value = 0;
-			}
-			// Calculate visual rotation of arm
-			var armAngle = value * 3 / 20 - 45;
-
-			// Rotate the arm in diagram to match real arm
-			ui.robotDiagram.arm.style.transform = 'rotate(' + armAngle + 'deg)';
-			break;
-			// This button is just an example of triggering an event on the robot by clicking a button.
 		case '/SmartDashboard/exampleVariable':
 			if (value) { // If function is active:
 				// Add active class to button.
@@ -125,7 +114,7 @@ function onValueChanged(key, value, isNew) {
 			}
 			NetworkTables.setValue(key, false);
 			break;
-		case '/SmartDashboard/autonomous/options': // Load list of prewritten autonomous modes
+		case '/SmartDashboard/Autonomous Mode/options': // Load list of prewritten autonomous modes
 			// Clear previous list
 			while (ui.autoSelect.firstChild) {
 				ui.autoSelect.removeChild(ui.autoSelect.firstChild);
@@ -139,9 +128,13 @@ function onValueChanged(key, value, isNew) {
 			// Set value to the already-selected mode. If there is none, nothing will happen.
 			ui.autoSelect.value = NetworkTables.getValue('/SmartDashboard/currentlySelectedMode');
 			break;
-		case '/SmartDashboard/autonomous/selected':
+		case '/SmartDashboard/currentlySelectedMode':
 			ui.autoSelect.value = value;
 			break;
+        case '/SmartDashboard/theme':
+            ui.theme.select.value = value;
+            ui.theme.link.href = 'css/' + value + '.css';
+            break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -208,12 +201,6 @@ function onValueChanged(key, value, isNew) {
 	}
 }
 
-// The rest of the doc is listeners for UI elements being clicked on
-ui.example.button.onclick = function() {
-	// Set NetworkTables values to the opposite of whether button has active class.
-	NetworkTables.setValue('/SmartDashboard/exampleVariable', this.className != 'active');
-};
-
 // Reset gyro value to 0 on click
 ui.gyro.container.onclick = function() {
 	// Store previous gyro val, will now be subtracted from val for callibration
@@ -244,10 +231,10 @@ ui.tuning.get.onclick = function() {
 
 // Update NetworkTables when autonomous selector is changed
 ui.autoSelect.onchange = function() {
-	NetworkTables.setValue('/SmartDashboard/autonomous/selected', this.value);
+	NetworkTables.setValue('/SmartDashboard/Autonomous Mode/selected', this.value);
 };
 
-// Get value of arm height slider when it's adjusted
-ui.armPosition.onchange = function() {
-	NetworkTables.setValue('/SmartDashboard/arm/encoder', parseInt(this.value));
+// When theme selection is made, turn on that theme
+ui.theme.select.onchange = function() {
+    NetworkTables.setValue('/SmartDashboard/theme', this.value);
 };

@@ -1,9 +1,5 @@
 # FRC Dashboard
-FRC Dashboard is a fully customizable dashboard for [FIRST Robotics Competition (FRC)](http://firstinspires.org/robotics/frc) which is based on web languages (JavaScript/CSS/HTML). It's completely legal for competition, and can be used to give your whole drive team significantly richer control of your robot.
-
-The dashboard's code is designed to be 100% accessible, tweakable, and expandable. To help in this aim, the code is rigorously documented with thousands of inline comments and [a set of training exercises](https://github.com/FRCDashboard/training). In addition, the base system comes with several functioning example widgets and features, and [many addons](https://github.com/FRCDashboard?query=addon-) have been created to speed up the development of your team's dashboard.
-
-**Contributions are VERY welcome! Please feel free to open a pull request or issue!**
+This is FIRST Robotics Team 1418 Vae Victis' 2016 fork of the FRC Dashboard web driving dashboard framework. FRC Dashboard was built off [our original 2016 UI](https://github.com/frc1418/2016-UI), and this fork is designed as a practice tool to test the ease of development on the framework. Also, [Erik Boesen](https://github.com/ErikBoesen) can't stand to use the old dashboard at our offseason competitions in the fall of 2016.
 
 ![Screenshot slideshow](screenshots.gif)
 
@@ -20,10 +16,6 @@ If you're going to be using the preferred method of using the dashboard (as an a
 * [`nodejs`](https://nodejs.com) & [`npm`](https://npmjs.com)
     * If you don't have permission to install these, see [this gist](https://gist.github.com/isaacs/579814) for a workaround.
 * Electron (to install, `cd` into dashboard directory and run `npm install`)
-
-### Configuration
-* In `ui.js`, there's a large `switch` statement in the `onValueChanged()` function which controls the updating of control elements in the dashboard. Example NetworkTables key names are used, but you'll need to change them to match those used in your team's robot code for them to affect anything on your robot.
-* For the camera to work, you must change the source in `style.css` to the IP of your live camera feed.
 
 ## Running
 1. Connect to your robot's network. (If you're just testing the dashboard and don't currently need to use it with the robot, you can skip this step.)
@@ -58,10 +50,12 @@ To view the dashboard, use your browser to navigate to `http://localhost:8888`.
 It is recommended that while using the dashboard on your driver station, you close the top panel of the FRC DriverStation to make room for the dashboard.
 
 ## Authors
-* [Erik Boesen](https://github.com/ErikBoesen) is the primary developer of FRC Dashboard.
-* [Team 1418](https://github.com/frc1418) used earlier versions of this code in 2015 and 2016.
-* [Leon Tan](https://github.com/lleontan) led the original 1418 UI team, coded pynetworktables2js, and developed a web-browser-based UI which was years later reworked to create FRC Dashboard.
-* [Dustin Spicuzza](https://github.com/virtuald) leads the [RobotPy](https://github.com/robotpy) project mentored team 1418 through much of FRC Dashboard's genesis.
+* [Erik Boesen](https://github.com/ErikBoesen), design & code, as well as developer of FRC Dashboard
+* [Leon Tan](https://github.com/lleontan), UI Lead
+* [Tim Winters](https://github.com/Twinters007), code
+* [Aki Maher](https://github.com/17mahera), art
+
+Special Thanks to [Dustin Spicuzza](https://github.com/virtuald), mentor and head of the [RobotPy](http://github.com/robotpy) project.
 
 ## License
 This software is licensed under the `Apache 2.0` license. Basically, do whatever you want, as long as you give credit to the [original source](https://github.com/FRCDashboard/FRCDashboard), and keep the license with it. More information in `LICENSE`.
