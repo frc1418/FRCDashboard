@@ -81,8 +81,7 @@ header {
     height: 80vh;
     overflow: hidden;
     background-color: #333;
-    /* You'll need to mess with this a bit to get your camera to work. Replace the url with a live-updating image feed from your camera. Using other camera streaming systems will require some tweaking. */
-    background-image: url('LINK TO CAMERA SOURCE HERE');
+    background-image: url('http://10.14.18.2:5800/?action=stream');
 }
 #tuning {
     width: 50vw;
@@ -141,20 +140,22 @@ text {
     -ms-transform-origin: right;
     transform-origin: right;
 }
-.winch {
-    transition: .5s;
+#team {
+    font-size: 28px;
+    letter-spacing: -1px;
 }
-.winch.forward {
+#winch rect {
+    /* Keep the transition property here. This avoids color fading when a theme is applied. */
+    transition: .5s transform;
+}
+#winch .forward {
     transform: rotate(-45deg);
 }
-.winch.back {
+#winch .back {
     transform: rotate(45deg);
 }
-.winch.forward.open {
-    transform: rotate(-5deg);
-}
-.winch.back.open {
-    transform: rotate(5deg);
+.transparent {
+    fill: none;
 }
 aside {
     right: 0;

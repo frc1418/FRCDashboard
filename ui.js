@@ -10,8 +10,11 @@ var ui = {
 		arm: document.getElementById('gyro-arm'),
 		number: document.getElementById('gyro-number')
 	},
-	robotDiagram: {
-		arm: document.getElementById('robot-arm')
+	robot: {
+        diagram: document.getElementById('robot-diagram'),
+		arm: document.getElementById('robot-arm'),
+		winchTrim: document.querySelectorAll('#trim-winch rect')[0],
+		winchOpen: false
 	},
 	example: {
 		button: document.getElementById('example-button'),
@@ -26,10 +29,18 @@ var ui = {
 		get: document.getElementById('get')
 	},
 	autoSelect: document.getElementById('auto-select'),
-    theme: {
-        select: document.getElementById('theme-select'),
-        link: document.getElementById('theme-link')
-    }
+	theme: {
+		select: document.getElementById('theme-select'),
+		link: document.getElementById('theme-link')
+	},
+	camera: {
+		viewer: document.getElementById('camera'),
+		id: 0,
+		srcs: [ // Will default to first source
+			'http://10.14.18.2:5800/?action=stream',
+			'http://10.14.18.2:5801/?action=stream'
+		]
+	}
 };
 
 // Sets function to be called on NetworkTables connect. Commented out because it's usually not necessary.
@@ -131,10 +142,10 @@ function onValueChanged(key, value, isNew) {
 		case '/SmartDashboard/currentlySelectedMode':
 			ui.autoSelect.value = value;
 			break;
-        case '/SmartDashboard/theme':
-            ui.theme.select.value = value;
-            ui.theme.link.href = 'css/' + value + '.css';
-            break;
+		case '/SmartDashboard/theme':
+			ui.theme.select.value = value;
+			ui.theme.link.href = 'css/' + value + '.css';
+			break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -236,5 +247,32 @@ ui.autoSelect.onchange = function() {
 
 // When theme selection is made, turn on that theme
 ui.theme.select.onchange = function() {
-    NetworkTables.setValue('/SmartDashboard/theme', this.value);
+	NetworkTables.setValue('/SmartDashboard/theme', this.value);
+};
+
+// When camera is clicked on, change camera sources
+ui.camera.viewer.onclick = function() {
+	if (ui.camera.id === ui.camera.srcs.length) ui.camera.id = 0;
+	ui.camera.viewer.style.backgroundImage = 'url(' + cameras[ui.camera.id] + ')';
+};
+
+ui.robot.diagram.onclick = function() {
+    var anim;
+	if (ui.robot.winchOpen) {
+		anim = setInterval(function() {
+			ui.robot.winchTrim.getAttributeNode('y').nodeValue *= 1.01;
+			if (ui.robot.winchTrim.getAttributeNode('y').nodeValue >= 400) {
+				clearTimeout(anim);
+			}
+		}, 1);
+        ui.robot.winchOpen = false;
+	} else {
+		anim = setInterval(function() {
+			ui.robot.winchTrim.getAttributeNode('y').nodeValue /= 1.01;
+			if (ui.robot.winchTrim.getAttributeNode('y').nodeValue <= 100) {
+				clearTimeout(anim);
+			}
+		}, 1);
+        ui.robot.winchOpen = true;
+	}
 };
