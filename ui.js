@@ -139,7 +139,8 @@ function onValueChanged(key, value, isNew) {
 			// Set value to the already-selected mode. If there is none, nothing will happen.
 			ui.autoSelect.value = NetworkTables.getValue('/SmartDashboard/currentlySelectedMode');
 			break;
-		case '/SmartDashboard/currentlySelectedMode':
+		case '/SmartDashboard/Autonomous Mode/selected':
+            console.log('test ' + value);
 			ui.autoSelect.value = value;
 			break;
 		case '/SmartDashboard/theme':
@@ -252,8 +253,9 @@ ui.theme.select.onchange = function() {
 
 // When camera is clicked on, change camera sources
 ui.camera.viewer.onclick = function() {
+    ui.camera.id += 1;
 	if (ui.camera.id === ui.camera.srcs.length) ui.camera.id = 0;
-	ui.camera.viewer.style.backgroundImage = 'url(' + cameras[ui.camera.id] + ')';
+	ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] + ')';
 };
 
 ui.robot.diagram.onclick = function() {
