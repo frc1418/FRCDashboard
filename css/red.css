@@ -13,6 +13,16 @@ svg *:not(text) {
 text {
     fill: #fe3131;
 }
+aside svg * {
+    fill: #fe3131;
+    stroke: none;
+}
+.active #bulb {
+    fill: yellow;
+}
+.active #auto-aim {
+    fill: red;
+}
 input[type="checkbox"] {
     -webkit-filter: hue-rotate(150deg) saturate(2);
 }

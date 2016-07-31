@@ -25,6 +25,10 @@ svg *:not(text) {
 text {
     fill: #333;
 }
+aside svg * {
+    fill: #333;
+    stroke: none;
+}
 #camera {
     background-color: #eee;
 }

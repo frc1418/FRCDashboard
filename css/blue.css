@@ -13,6 +13,13 @@ svg *:not(text) {
 text {
     fill: #18b5ee;
 }
+aside svg * {
+    fill: #18b5ee;
+    stroke: none;
+}
+.active #bulb * {
+    fill: yellow;
+}
 input[type="checkbox"] {
     -webkit-filter: saturate(1);
     filter: saturate(1);

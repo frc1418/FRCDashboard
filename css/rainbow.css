@@ -12,10 +12,18 @@ svg * {
     stroke: #18b5ee;
     animation: fadeStroke 5s infinite linear;
 }
-text {
+text, aside svg *  {
     fill: #18b5ee;
     stroke: none;
     animation: fadeFill 5s infinite linear;
+}
+.active #bulb * {
+    fill: yellow;
+    animation: none;
+}
+.active #auto-aim * {
+    fill: red;
+    animation: none;
 }
 @keyframes fade {
     0% {

@@ -11,14 +11,10 @@ var ui = {
 		number: document.getElementById('gyro-number')
 	},
 	robot: {
-        diagram: document.getElementById('robot-diagram'),
+		diagram: document.getElementById('robot-diagram'),
 		arm: document.getElementById('robot-arm'),
 		winchTrim: document.querySelectorAll('#trim-winch rect')[0],
 		winchOpen: false
-	},
-	example: {
-		button: document.getElementById('example-button'),
-		readout: document.getElementById('example-readout')
 	},
 	tuning: {
 		list: document.getElementById('tuning'),
@@ -29,6 +25,8 @@ var ui = {
 		get: document.getElementById('get')
 	},
 	autoSelect: document.getElementById('auto-select'),
+	flashlight: document.getElementById('bulb'),
+	autoAim: document.getElementById('auto-aim'),
 	theme: {
 		select: document.getElementById('theme-select'),
 		link: document.getElementById('theme-link')
@@ -67,7 +65,7 @@ function onValueChanged(key, value, isNew) {
 
 	// This switch statement chooses which UI element to update when a NetworkTables variable changes.
 	switch (key) {
-		case '/SmartDashboard/drive/navX/yaw': // Gyro rotation
+		case '/SmartDashboard/Drive/NavX | Yaw': // Gyro rotation
 			ui.gyro.val = value;
 			ui.gyro.visualVal = Math.floor(ui.gyro.val - ui.gyro.offset);
 			if (ui.gyro.visualVal < 0) { // Corrects for negative values
@@ -75,19 +73,6 @@ function onValueChanged(key, value, isNew) {
 			}
 			ui.gyro.arm.style.transform = ('rotate(' + ui.gyro.visualVal + 'deg)');
 			ui.gyro.number.innerHTML = ui.gyro.visualVal + 'º';
-			break;
-			// The following case is an example, for a robot with an arm at the front.
-			// Info on the actual robot that this works with can be seen at thebluealliance.com/team/1418/2016.
-		case '/SmartDashboard/exampleVariable':
-			if (value) { // If function is active:
-				// Add active class to button.
-				ui.example.button.className = 'active';
-				ui.example.readout.innerHTML = 'Value is true';
-			} else { // Otherwise
-				// Take it off
-				ui.example.button.className = '';
-				ui.example.readout.innerHTML = 'Value is false';
-			}
 			break;
 		case '/SmartDashboard/timeRunning':
 			// When this NetworkTables variable is true, the timer will start.
@@ -140,13 +125,18 @@ function onValueChanged(key, value, isNew) {
 			ui.autoSelect.value = NetworkTables.getValue('/SmartDashboard/currentlySelectedMode');
 			break;
 		case '/SmartDashboard/Autonomous Mode/selected':
-            console.log('test ' + value);
 			ui.autoSelect.value = value;
 			break;
 		case '/SmartDashboard/theme':
 			ui.theme.select.value = value;
 			ui.theme.link.href = 'css/' + value + '.css';
 			break;
+		case '/SmartDashboard/LightBulb':
+            ui.flashlight.parentNode.className = value ? 'active' : '';
+			break;
+        case '/SmartDashboard/Drive/autoAim':
+            ui.autoAim.parentNode.className = value ? 'active' : '';
+            break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -253,13 +243,13 @@ ui.theme.select.onchange = function() {
 
 // When camera is clicked on, change camera sources
 ui.camera.viewer.onclick = function() {
-    ui.camera.id += 1;
+	ui.camera.id += 1;
 	if (ui.camera.id === ui.camera.srcs.length) ui.camera.id = 0;
 	ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] + ')';
 };
 
 ui.robot.diagram.onclick = function() {
-    var anim;
+	var anim;
 	if (ui.robot.winchOpen) {
 		anim = setInterval(function() {
 			ui.robot.winchTrim.getAttributeNode('y').nodeValue *= 1.01;
@@ -267,7 +257,7 @@ ui.robot.diagram.onclick = function() {
 				clearTimeout(anim);
 			}
 		}, 1);
-        ui.robot.winchOpen = false;
+		ui.robot.winchOpen = false;
 	} else {
 		anim = setInterval(function() {
 			ui.robot.winchTrim.getAttributeNode('y').nodeValue /= 1.01;
@@ -275,6 +265,14 @@ ui.robot.diagram.onclick = function() {
 				clearTimeout(anim);
 			}
 		}, 1);
-        ui.robot.winchOpen = true;
+		ui.robot.winchOpen = true;
 	}
+};
+
+ui.flashlight.onclick = function() {
+    NetworkTables.setValue('/SmartDashboard/LightBulb', (ui.flashlight.parentNode.className === 'active') ? false : true);
+};
+
+ui.autoAim.onclick = function() {
+	NetworkTables.setValue('/SmartDashboard/Drive/autoAim', (ui.autoAim.parentNode.className === 'active') ? false : true);
 };

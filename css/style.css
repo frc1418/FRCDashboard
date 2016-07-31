@@ -49,6 +49,7 @@ input[type="checkbox"] {
 }
 
 /* Major interface panes, aside, article, header, etc. */
+
 body > * {
     padding: 10px;
     position: fixed;
@@ -116,15 +117,11 @@ text {
     fill: white;
 }
 #gyro {
-    width: 175px;
-    height: 175px;
-    margin-left: 30px;
-    margin-top: 15px;
+    width: 450px;
+    height: 450px;
 }
 #gyro-arm {
-    -webkit-transform-origin: bottom;
-    -ms-transform-origin: bottom;
-    transform-origin: bottom;
+    transform-origin: center;
 }
 #gyro-number {
     font-size: 25px;
@@ -165,4 +162,35 @@ aside {
 }
 aside > * {
     margin-bottom: 20px;
+}
+aside svg {
+    width: 64px;
+    display: block;
+    clear: both;
+}
+aside svg * {
+    fill: white;
+    stroke: white;
+}
+.active #bulb * {
+    fill: yellow;
+}
+#auto-aim {
+    fill: aqua;
+    width: 70px;
+    transition: .1s;
+}
+.active #auto-aim {
+    animation: 5s rotate infinite linear;
+}
+.active #auto-aim * {
+    fill: red;
+}
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
