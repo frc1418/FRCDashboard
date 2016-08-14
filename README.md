@@ -1,7 +1,7 @@
 # FRC Dashboard
 This is FIRST Robotics Team 1418 Vae Victis' 2016 fork of the FRC Dashboard web driving dashboard framework. FRC Dashboard was built off [our original 2016 UI](https://github.com/frc1418/2016-UI), and this fork is designed as a practice tool to test the ease of development on the framework. Also, [Erik Boesen](https://github.com/ErikBoesen) can't stand to use the old dashboard at our offseason competitions in the fall of 2016.
 
-![Screenshot slideshow](screenshots.gif)
+![Screenshot](screenshot.png)
 
 ## Setup
 ### Dependencies
