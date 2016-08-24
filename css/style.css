@@ -82,7 +82,12 @@ header {
     height: 80vh;
     overflow: hidden;
     background-color: #333;
+    background-size: cover;
     background-image: url('http://10.14.18.2:5800/?action=stream');
+    image-rendering: optimizeSpeed;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
 }
 #tuning {
     width: 50vw;
