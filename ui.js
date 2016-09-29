@@ -24,6 +24,27 @@ var ui = {
 		set: document.getElementById('set'),
 		get: document.getElementById('get')
 	},
+	auto: {
+		button: document.getElementById('auto-button'),
+		pane: document.getElementById('auto'),
+		defensesAZ: ['A', 'B', 'C', 'D'],
+		defenseIDs: [
+			['A0', 'A1'],
+			['E0', 'E0'],
+			['C1', 'C1'],
+			['E0', 'E0']
+		],
+		defenseNames: [
+			['portcullis', 'chevalDeFrise'],
+			['moat', 'ramparts'],
+			['sallyport', 'drawbridge'],
+			['roughTerrain', 'rockwall']
+		],
+		defenses: document.querySelectorAll('#defenses td'),
+		robots: document.querySelectorAll('#robots img'),
+        robotStatuses: ['empty', 'allied', 'us']
+	},
+	// TODO: Merge autoSelect into auto object
 	autoSelect: document.getElementById('auto-select'),
 	flashlight: document.getElementById('bulb'),
 	autoAim: document.getElementById('auto-aim'),
@@ -132,11 +153,11 @@ function onValueChanged(key, value, isNew) {
 			ui.theme.link.href = 'css/' + value + '.css';
 			break;
 		case '/SmartDashboard/LightBulb':
-            ui.flashlight.parentNode.className = value ? 'active' : '';
+			ui.flashlight.parentNode.className = value ? 'active' : '';
 			break;
-        case '/SmartDashboard/Drive/autoAim':
-            ui.autoAim.parentNode.className = value ? 'active' : '';
-            break;
+		case '/SmartDashboard/Drive/autoAim':
+			ui.autoAim.parentNode.className = value ? 'active' : '';
+			break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -201,6 +222,7 @@ function onValueChanged(key, value, isNew) {
 			console.log('Error: Non-new variable ' + key + ' not present in tuning list!');
 		}
 	}
+
 }
 
 // Reset gyro value to 0 on click
@@ -217,6 +239,14 @@ ui.tuning.button.onclick = function() {
 		ui.tuning.list.style.display = 'block';
 	} else {
 		ui.tuning.list.style.display = 'none';
+	}
+};
+// Open tuning section when button is clicked
+ui.auto.button.onclick = function() {
+	if (ui.auto.pane.style.display === 'none') {
+		ui.auto.pane.style.display = 'block';
+	} else {
+		ui.auto.pane.style.display = 'none';
 	}
 };
 
@@ -270,9 +300,102 @@ ui.robot.diagram.onclick = function() {
 };
 
 ui.flashlight.onclick = function() {
-    NetworkTables.setValue('/SmartDashboard/LightBulb', (ui.flashlight.parentNode.className === 'active') ? false : true);
+	NetworkTables.setValue('/SmartDashboard/LightBulb', (ui.flashlight.parentNode.className === 'active') ? false : true);
 };
 
 ui.autoAim.onclick = function() {
 	NetworkTables.setValue('/SmartDashboard/Drive/autoAim', (ui.autoAim.parentNode.className === 'active') ? false : true);
 };
+
+
+
+
+// Manage module autonomous selection pane.
+/*for (i = 0; i < ui.auto.robots.length; i++) {
+    console.log(robots[i]);
+    robots[i].state = 0;
+    robots[i].position = i;
+    robots[i].src = 'img/auto/empty.png';
+}*/
+console.log('ddsajdvfk');
+onclick = function(e) {
+    console.log(e.target);
+    if (ui.auto.robots.indexOf(e.target) !== 0) {
+        // Need non-strict equals here, prop will be returned as string
+        if (e.target.state == 2) {
+            e.target.state = 0;
+        } else {
+            e.target.state++;
+        }
+        // TODO: Only change visual state when NetworkTables updates.
+        // This way we can tell if there's a problem with the connection or otherwise.
+        NetworkTables.setValue('/SmartDashboard/attackerState' + e.target.state, ui.auto.robotStatuses[parseInt(e.target.state)]);
+    }
+};
+
+for (i = 0; i < ui.auto.defenses.length; i++) {
+
+}
+/*
+everydefenseSelector.each(function(a) {
+	//for every defenseSelector add the triangles, set the id, 'a' is the index in the list of divs
+	var thisDiv = $(this);
+	thisDiv.attr('defenseClass', a);
+	thisDiv.attr('id', 'defenseSelector' + a);
+	var defenseNumber = 0;
+	thisDiv.attr('defenseNumber', defenseNumber);
+	thisDiv.append($('<div class="arrow-up"></div>')
+		.click(function() {
+			//onclick take the value of the current defense from this div, ex'defenseName=(3,0)', ++1
+			var currentDefenseClass = thisDiv.attr('defenseClass');
+
+			if (currentDefenseClass >= 3) {
+				currentDefenseClass = 0;
+			} else {
+				currentDefenseClass++;
+			}
+			thisDiv.attr('defenseclass', currentDefenseClass);
+			thisDiv.children('.selectionToggleBox')
+				.attr('src', 'img/' + defenseNames[currentDefenseClass] + defenseNumber + '.png');
+			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[currentDefenseClass][defenseNumber]);
+		}));
+	thisDiv.append($('<img>')
+		.addClass('selectionToggleBox')
+		.attr('src', 'img/defaultImg.png')
+		.click(function() {
+			var currentDefenseNumber = thisDiv.attr('defensenumber');
+
+			if (currentDefenseNumber >= 1) {
+				currentDefenseNumber = 0;
+			} else {
+				currentDefenseNumber++;
+			}
+			thisDiv.attr('defensenumber', currentDefenseNumber);
+			thisDiv.children('.selectionToggleBox');
+
+			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[thisDiv.attr('defenseClass')][currentDefenseNumber]);
+		})
+	);
+	thisDiv.append($('<div class="arrow-down"></div>')
+		.click(function(i, b) { //right now both are being clicked
+			//onclick take the value of the current defense from this div, ex'defenseName=(3,0)', ++1
+			var currentDefenseClass = parseInt(thisDiv.attr('defenseclass'));
+
+			if (currentDefenseClass <= 0) {
+				currentDefenseClass = 3;
+			} else {
+				currentDefenseClass--;
+			}
+			thisDiv.attr('defenseclass', currentDefenseClass);
+			thisDiv.children('.selectionToggleBox')
+				.attr('src', 'img/' + defenseNames[currentDefenseClass] + defenseNumber + '.png');
+			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[currentDefenseClass][defenseNumber]);
+		}));
+	if (defenseNumber === 0) {
+		defenseNumber = 1;
+	} else {
+		defenseNumber = 0;
+	}
+});*/
+
+// TODO: Add NT listeners to big switch statement

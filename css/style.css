@@ -199,3 +199,38 @@ aside svg * {
         transform: rotate(360deg);
     }
 }
+
+#auto {
+    width: 50vw;
+    height: 100vh;
+    background: black;
+    top: 0;
+    right: 0;
+    display: none;
+}
+#defenses div::before,
+.arrow-down {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 25px solid transparent;
+    margin: 0 auto;
+    display: block;
+}
+#defenses div::before {
+    border-bottom-color: red;
+}
+.arrow-down {
+    border-top-color: red;
+}
+/* TODO: Look into this, specifically how to remove the need for it. */
+.selectionToggleBox {
+    height: 100px;
+    width: 100px;
+    display: block;
+    background-color: lightgrey;
+}
+#robot img {
+    height: 100px;
+    width: 100px;
+}
