@@ -221,19 +221,18 @@ aside svg * {
     display: block;
 }
 .arrow-up {
-    border-bottom-color: red;
+    border-bottom-color: #666;
 }
 .arrow-down {
-    border-top-color: red;
+    border-top-color: #666;
 }
-/* TODO: Look into this, specifically how to remove the need for it. */
-.selectionToggleBox {
-    height: 100px;
-    width: 100px;
+.defense {
+    height: 140px;
+    width: 140px;
+    padding: 10px;
     display: block;
-    background-color: lightgrey;
 }
 #robot img {
-    height: 100px;
-    width: 100px;
+    height: 120px;
+    width: 120px;
 }

@@ -67,3 +67,29 @@ text, aside svg *  {
     80% { fill: #18b5ee; }
     100% { fill: #e81e1e; }
 }
+
+.arrow-up {
+    border-bottom-color: #18b5ee;
+    animation: fadeBorderBottom 5s infinite linear;
+}
+.arrow-down {
+    border-top-color: #18b5ee;
+    animation: fadeBorderTop 5s infinite linear;
+}
+
+@keyframes fadeBorderTop {
+    0% { border-top-color: #e81e1e; }
+    20% { border-top-color: #ffa733; }
+    40% { border-top-color: #fbff37; }
+    60% { border-top-color: #49f130; }
+    80% { border-top-color: #18b5ee; }
+    100% { border-top-color: #e81e1e; }
+}
+@keyframes fadeBorderBottom {
+    0% { border-bottom-color: #e81e1e; }
+    20% { border-bottom-color: #ffa733; }
+    40% { border-bottom-color: #fbff37; }
+    60% { border-bottom-color: #49f130; }
+    80% { border-bottom-color: #18b5ee; }
+    100% { border-bottom-color: #e81e1e; }
+}

@@ -24,3 +24,9 @@ input[type="checkbox"] {
     -webkit-filter: saturate(1);
     filter: saturate(1);
 }
+.arrow-up {
+    border-bottom-color: #18b5ee;
+}
+.arrow-down {
+    border-top-color: #18b5ee;
+}
