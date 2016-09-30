@@ -41,7 +41,7 @@ var ui = {
 			['roughTerrain', 'rockwall']
 		],
 		defenses: document.querySelectorAll('#defenses td'),
-		robots: document.querySelectorAll('#robots img'),
+		robots: document.getElementsByClassName('autobot'),
         robotStatuses: ['empty', 'allied', 'us']
 	},
 	// TODO: Merge autoSelect into auto object
@@ -158,6 +158,29 @@ function onValueChanged(key, value, isNew) {
 		case '/SmartDashboard/Drive/autoAim':
 			ui.autoAim.parentNode.className = value ? 'active' : '';
 			break;
+        case '/SmartDashboard/attackerState0':
+        case '/SmartDashboard/attackerState1':
+        case '/SmartDashboard/attackerState2':
+        case '/SmartDashboard/attackerState3':
+        case '/SmartDashboard/attackerState4':
+            console.log('test');
+            var thisBot = ui.auto.robots[key[key.length - 1]];
+            thisBot.state = value;
+            // TODO: Only allow two allies and one of us. Currently you can have as many
+            // as you want of both, despite that being impossible IRL.
+            switch (thisBot.state) {
+                case 0:
+                    thisBot.src = 'img/auto/empty.png';
+                    break;
+                case 1:
+                    thisBot.src = 'img/auto/allied.png';
+                    break;
+                case 2:
+                    thisBot.src = 'img/auto/us.png';
+                    break;
+            }
+
+            break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -310,92 +333,82 @@ ui.autoAim.onclick = function() {
 
 
 
-// Manage module autonomous selection pane.
-/*for (i = 0; i < ui.auto.robots.length; i++) {
-    console.log(robots[i]);
-    robots[i].state = 0;
-    robots[i].position = i;
-    robots[i].src = 'img/auto/empty.png';
-}*/
-console.log('ddsajdvfk');
+// Manage modular autonomous selection pane.
+for (i = 0; i < ui.auto.robots.length; i++) {
+    ui.auto.robots[i].state = 0;
+    ui.auto.robots[i].position = i;
+    ui.auto.robots[i].src = 'img/auto/empty.png';
+}
+
 onclick = function(e) {
-    console.log(e.target);
-    if (ui.auto.robots.indexOf(e.target) !== 0) {
+    // AUTOBOTS ASSEMBLE
+    if (e.target.className === 'autobot') {
         // Need non-strict equals here, prop will be returned as string
         if (e.target.state == 2) {
             e.target.state = 0;
         } else {
             e.target.state++;
         }
-        // TODO: Only change visual state when NetworkTables updates.
-        // This way we can tell if there's a problem with the connection or otherwise.
-        NetworkTables.setValue('/SmartDashboard/attackerState' + e.target.state, ui.auto.robotStatuses[parseInt(e.target.state)]);
+        // TODO: Only change visual state when NetworkTables updates. This way we
+        // can tell more easiily if there's a problem with the connection or otherwise.
+        NetworkTables.setValue('/SmartDashboard/attackerState' + e.target.position, e.target.state);
+
+    } else if (e.target.className === 'arrow-up') {
+        // onclick take the value of the current defense from this div, ex'defenseName=(3,0)', ++1
+        // TODO: Rename defenseClass attr to something more apt.
+        currentDefense = e.target.defenseClass;
+
+        if (currentDefense >= 3) {
+            currentDefense = 0;
+        } else {
+            currentDefense++;
+        }
+
+        e.target.defenseClass = currentDefense;
+        e.target.parentNode.childNodes[1].src = 'img/' + ui.auto.defensesAZ[currentDefense] + defenseNumber + '.png';
+
+        NetworkTables.setValue('/SmartDashboard/' + e.target.id, ui.auto.defensesAZ[currentDefense] + defenseNumber);
+    } else if (e.target.className === 'arrow-down') {
+        // TODO: Rename defenseClass attr to something more apt.
+        currentDefense = e.target.defenseClass;
+
+        if (currentDefense >= 3) {
+            currentDefense = 0;
+        } else {
+            currentDefense--;
+        }
+
+        e.target.defenseClass = currentDefense;
+        e.target.parentNode.childNodes[1].src = 'img/' + ui.auto.defensesAZ[currentDefense] + defenseNumber + '.png';
+
+        NetworkTables.setValue('/SmartDashboard/' + e.target.id, ui.auto.defensesAZ[currentDefense] + defenseNumber);
+    } else if (e.target.className === 'defenseSelector') {
+        currentDefense = e.target.defenseNumber;
+
+        currentDefense = currentDefense ? 0 : 1;
+
+        e.target.defenseNumber = currentDefense;
+        e.target.parentNode.childNodes[1].src = 'img/' + ui.auto.defensesAZ[currentDefense] + defenseNumber + '.png';
+
+        NetworkTables.setValue('/SmartDashboard/' + e.target.id, ui.auto.defensesAZ[e.target.defenseClass] + currentDefense);
     }
+    // TODO: These three share much of their processing code. Functionize them.
 };
 
 for (i = 0; i < ui.auto.defenses.length; i++) {
+    ui.auto.defenses[i].defenseClass = i;
+    ui.auto.defenses[i].id = 'defenseSelector' + i;
+    ui.auto.defenses[i].defenseNumber = 0;
 
+    var arrowUp = document.createElement('div');
+    arrowUp.className = 'arrow-up';
+
+    var img = document.createElement('img');
+    img.className = 'selectionToggleBox';
+    img.src = 'img/defaultImg.png';
+
+    var arrowDown = document.createElement('div');
+    arrowUp.className = 'arrow-down';
 }
-/*
-everydefenseSelector.each(function(a) {
-	//for every defenseSelector add the triangles, set the id, 'a' is the index in the list of divs
-	var thisDiv = $(this);
-	thisDiv.attr('defenseClass', a);
-	thisDiv.attr('id', 'defenseSelector' + a);
-	var defenseNumber = 0;
-	thisDiv.attr('defenseNumber', defenseNumber);
-	thisDiv.append($('<div class="arrow-up"></div>')
-		.click(function() {
-			//onclick take the value of the current defense from this div, ex'defenseName=(3,0)', ++1
-			var currentDefenseClass = thisDiv.attr('defenseClass');
-
-			if (currentDefenseClass >= 3) {
-				currentDefenseClass = 0;
-			} else {
-				currentDefenseClass++;
-			}
-			thisDiv.attr('defenseclass', currentDefenseClass);
-			thisDiv.children('.selectionToggleBox')
-				.attr('src', 'img/' + defenseNames[currentDefenseClass] + defenseNumber + '.png');
-			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[currentDefenseClass][defenseNumber]);
-		}));
-	thisDiv.append($('<img>')
-		.addClass('selectionToggleBox')
-		.attr('src', 'img/defaultImg.png')
-		.click(function() {
-			var currentDefenseNumber = thisDiv.attr('defensenumber');
-
-			if (currentDefenseNumber >= 1) {
-				currentDefenseNumber = 0;
-			} else {
-				currentDefenseNumber++;
-			}
-			thisDiv.attr('defensenumber', currentDefenseNumber);
-			thisDiv.children('.selectionToggleBox');
-
-			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[thisDiv.attr('defenseClass')][currentDefenseNumber]);
-		})
-	);
-	thisDiv.append($('<div class="arrow-down"></div>')
-		.click(function(i, b) { //right now both are being clicked
-			//onclick take the value of the current defense from this div, ex'defenseName=(3,0)', ++1
-			var currentDefenseClass = parseInt(thisDiv.attr('defenseclass'));
-
-			if (currentDefenseClass <= 0) {
-				currentDefenseClass = 3;
-			} else {
-				currentDefenseClass--;
-			}
-			thisDiv.attr('defenseclass', currentDefenseClass);
-			thisDiv.children('.selectionToggleBox')
-				.attr('src', 'img/' + defenseNames[currentDefenseClass] + defenseNumber + '.png');
-			NetworkTables.setValue('/SmartDashboard/' + thisDiv.attr('id'), realDefenseNames[currentDefenseClass][defenseNumber]);
-		}));
-	if (defenseNumber === 0) {
-		defenseNumber = 1;
-	} else {
-		defenseNumber = 0;
-	}
-});*/
 
 // TODO: Add NT listeners to big switch statement

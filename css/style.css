@@ -203,12 +203,15 @@ aside svg * {
 #auto {
     width: 50vw;
     height: 100vh;
-    background: black;
     top: 0;
     right: 0;
     display: none;
 }
-#defenses div::before,
+#auto img {
+    width: 120px;
+    height: 120px;
+}
+.arrow-up,
 .arrow-down {
     content: '';
     width: 0;
@@ -217,7 +220,7 @@ aside svg * {
     margin: 0 auto;
     display: block;
 }
-#defenses div::before {
+.arrow-up {
     border-bottom-color: red;
 }
 .arrow-down {
