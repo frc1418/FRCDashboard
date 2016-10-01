@@ -199,3 +199,40 @@ aside svg * {
         transform: rotate(360deg);
     }
 }
+
+#auto {
+    width: 50vw;
+    height: 100vh;
+    top: 0;
+    right: 0;
+    display: none;
+}
+#auto img {
+    width: 120px;
+    height: 120px;
+}
+.arrow-up,
+.arrow-down {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 25px solid transparent;
+    margin: 0 auto;
+    display: block;
+}
+.arrow-up {
+    border-bottom-color: #666;
+}
+.arrow-down {
+    border-top-color: #666;
+}
+.defense {
+    height: 140px;
+    width: 140px;
+    padding: 10px;
+    display: block;
+}
+#robot img {
+    height: 120px;
+    width: 120px;
+}

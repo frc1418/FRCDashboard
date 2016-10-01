@@ -24,6 +24,22 @@ var ui = {
 		set: document.getElementById('set'),
 		get: document.getElementById('get')
 	},
+	auto: {
+		button: document.getElementById('auto-button'),
+		pane: document.getElementById('auto'),
+		defensesAZ: ['A', 'B', 'C', 'D'],
+		defenseIDs: [
+			['A0', 'A1'],
+			['E0', 'E0'],
+			['C1', 'C1'],
+			['E0', 'E0']
+		],
+        // This variable will be replaced later on with the image elements in
+        // all the <td>s (once they're generated).
+		defenses: document.querySelectorAll('#defenses td:not(:first-child)'),
+		robots: document.getElementsByClassName('autobot'),
+		robotStatuses: ['empty', 'allied', 'us']
+	},
 	autoSelect: document.getElementById('auto-select'),
 	flashlight: document.getElementById('bulb'),
 	autoAim: document.getElementById('auto-aim'),
@@ -132,11 +148,61 @@ function onValueChanged(key, value, isNew) {
 			ui.theme.link.href = 'css/' + value + '.css';
 			break;
 		case '/SmartDashboard/LightBulb':
-            ui.flashlight.parentNode.className = value ? 'active' : '';
+			ui.flashlight.parentNode.className = value ? 'active' : '';
 			break;
-        case '/SmartDashboard/Drive/autoAim':
-            ui.autoAim.parentNode.className = value ? 'active' : '';
-            break;
+		case '/SmartDashboard/Drive/autoAim':
+			ui.autoAim.parentNode.className = value ? 'active' : '';
+			break;
+		case '/SmartDashboard/attackerState0':
+		case '/SmartDashboard/attackerState1':
+		case '/SmartDashboard/attackerState2':
+		case '/SmartDashboard/attackerState3':
+		case '/SmartDashboard/attackerState4':
+            // If the value of an autonomous bot icon changes, apply the new icon.
+
+            // Get the number of the bot from the last char of the key
+            // TODO if bored: Make this compatible with a multi-digit number.
+            // Wouldn't be useful, but would appease Erik's OCD.
+			var thisBot = ui.auto.robots[key[key.length - 1]];
+            // Set the value.
+			thisBot.state = value;
+			// TODO: Only allow two allies and one us to be selected. Currently you
+            // can have as many as you want of both, despite that being impossible IRL.
+
+            // Choose the appropriate image to represent the state of the selector.
+			switch (thisBot.state) {
+				case 0:
+					thisBot.src = 'img/auto/no-robot.png';
+					break;
+				case 1:
+					thisBot.src = 'img/auto/allied.png';
+					break;
+				case 2:
+					thisBot.src = 'img/auto/us.png';
+					break;
+			}
+			break;
+        case '/SmartDashboard/defenseSelector1':
+		case '/SmartDashboard/defenseSelector2':
+		case '/SmartDashboard/defenseSelector3':
+		case '/SmartDashboard/defenseSelector4':
+            // Manage updates to the defense selectors in the auto pane.
+			// TODO: Why call the NT vals "defenseSelector?" Not a very apt name,
+			// since the dashboard is not the only thing to use these values.
+			// This will need to be changed in robot code as well,
+			// hence why I'm leaving it like this for now.
+
+            // Store which defense the NT value refers to.
+			var thisDefense = ui.auto.defenses[key[key.length - 1]];
+
+            // Set the defense's class (numeric index of a letter from A-D) and number (binary digit).
+            // Read the Stronghold rules for more info on how this system works.
+			thisDefense.defenseClass = ui.auto.defensesAZ.indexOf(value[0]);
+			thisDefense.defenseNumber = parseInt(value[1]);
+
+            // Set the source of the image. Aaaaaaand we're done.
+			thisDefense.src = 'img/auto/' + value + '.png';
+			break;
 	}
 
 	// The following code manages tuning section of the interface.
@@ -201,6 +267,7 @@ function onValueChanged(key, value, isNew) {
 			console.log('Error: Non-new variable ' + key + ' not present in tuning list!');
 		}
 	}
+
 }
 
 // Reset gyro value to 0 on click
@@ -219,6 +286,14 @@ ui.tuning.button.onclick = function() {
 		ui.tuning.list.style.display = 'none';
 	}
 };
+// Open tuning section when button is clicked
+ui.auto.button.onclick = function() {
+	if (ui.auto.pane.style.display === 'none') {
+		ui.auto.pane.style.display = 'block';
+	} else {
+		ui.auto.pane.style.display = 'none';
+	}
+};
 
 // Manages get and set buttons at the top of the tuning pane
 ui.tuning.set.onclick = function() {
@@ -232,6 +307,7 @@ ui.tuning.get.onclick = function() {
 };
 
 // Update NetworkTables when autonomous selector is changed
+// TODO: Move this to the autonomous pane.
 ui.autoSelect.onchange = function() {
 	NetworkTables.setValue('/SmartDashboard/Autonomous Mode/selected', this.value);
 };
@@ -270,9 +346,117 @@ ui.robot.diagram.onclick = function() {
 };
 
 ui.flashlight.onclick = function() {
-    NetworkTables.setValue('/SmartDashboard/LightBulb', (ui.flashlight.parentNode.className === 'active') ? false : true);
+	NetworkTables.setValue('/SmartDashboard/LightBulb', (ui.flashlight.parentNode.className === 'active') ? false : true);
 };
 
 ui.autoAim.onclick = function() {
 	NetworkTables.setValue('/SmartDashboard/Drive/autoAim', (ui.autoAim.parentNode.className === 'active') ? false : true);
 };
+
+
+
+// AUTONOMOUS PANE MANAGEMENT
+
+
+// Go through the <td>s in the table in the autonomous pane that are for defenses.
+// For each one, add a display image along with up & down buttons.
+for (i = 0; i < ui.auto.defenses.length; i++) {
+    // Create up arrow element.
+	var arrowUp = document.createElement('div');
+    // Give it the appropriate class.
+	arrowUp.className = 'arrow-up';
+    // Put it into the <td>.
+	ui.auto.defenses[i].appendChild(arrowUp);
+
+    // Create image element.
+	var img = document.createElement('img');
+    // Give it the appropriate class name.
+	img.className = 'defense';
+    // Give it the default source.
+	img.src = 'img/auto/no-defense.png';
+    // Give it the default class, number, and position number.
+    // These will be overridden if data is retrieved from NetworkTables.
+	img.defenseClass = 0;
+	img.defenseNumber = 0;
+    // position needs to be increased because lowbar element is not modified
+    // by this for loop.
+	img.position = i + 1;
+    // Put the image into the <td>.
+	ui.auto.defenses[i].appendChild(img);
+
+    // Create down arrow element.
+	var arrowDown = document.createElement('div');
+    // Give it the appropriate class name.
+	arrowDown.className = 'arrow-down';
+    // Put it into the <td>.
+	ui.auto.defenses[i].appendChild(arrowDown);
+}
+
+// Redefine the defenses object so that it refers to the images instead of the <td>s.
+// TODO: Check if this is bad practice.
+ui.auto.defenses = document.getElementsByClassName('defense');
+
+// Go through each of the <td>s in the table that are for robots.
+for (i = 0; i < ui.auto.robots.length; i++) {
+    // Set the default state (empty).
+	ui.auto.robots[i].state = 0;
+    // Set a position property to easily fetch to figure out which robot icon was clicked.
+	ui.auto.robots[i].position = i;
+    // Set default robot image (empty).
+	ui.auto.robots[i].src = 'img/auto/no-robot.png';
+}
+
+// Click handler for everything in the autonomous pane.
+// Includes auto bots, defense images, and up/down buttons for defenses.
+ui.auto.pane.onclick = function(e) {
+    // Do different things based on what they clicked on.
+	switch (e.target.className) {
+        // If they clicked on a robot icon.
+        // Also, obligatory:
+		// AUTOBOTS ASSEMBLE
+		case 'autobot':
+            // Figure out what the new state should be.
+			// Need non-strict equals here, .state prop will be returned as string.
+            // TODO: Do this only after the data has been retrieved from NT.
+			if (e.target.state == 2) {
+				e.target.state = 0;
+			} else {
+				e.target.state++;
+			}
+            // Update the NetworkTables value.
+            // The code in the onValueChanged() function above will take it from here.
+			NetworkTables.setValue('/SmartDashboard/attackerState' + e.target.position, e.target.state);
+			break;
+		case 'arrow-up':
+		case 'arrow-down':
+            // If an up/down arrow was clicked.
+            // Get the corresponding <img>'s defense's class.
+			var defenseClass = e.target.parentNode.childNodes[1].defenseClass;
+
+            // If the up arrow was clicked, increase the class. If down, decrease it.
+			defenseClass += (e.target.className === 'arrow-up') ? 1 : -1;
+
+            // If the above operation moved to a nonexistent class, then cycle it back to the other side.
+			if (defenseClass > 3) {
+				defenseClass = 0;
+			} else if (defenseClass < 0) {
+				defenseClass = 3;
+			}
+
+            // Set the value in NetworkTables.
+			NetworkTables.setValue('/SmartDashboard/defenseSelector' + e.target.parentNode.childNodes[1].position, ui.auto.defensesAZ[defenseClass] + e.target.parentNode.childNodes[1].defenseNumber);
+			break;
+		case 'defense':
+            // If it was a defense image that was clicked.
+            // Get the number of the defense that's being shown.
+            var defenseNumber = e.target.defenseNumber;
+            // Switch it around
+			defenseNumber = defenseNumber ? 0 : 1;
+
+            // Set the variable in NetworkTables.
+            NetworkTables.setValue('/SmartDashboard/defenseSelector' + e.target.position, ui.auto.defensesAZ[e.target.defenseClass] + defenseNumber);
+			break;
+	}
+};
+
+// That's all, folks.

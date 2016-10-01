@@ -15,6 +15,7 @@
         <!-- Tells whether robot is connected to dashboard. -->
         <div id="robot-state">Unknown state</div>
         <button id="tuning-button">Tuning</button>
+        <button id="auto-button">Auto</button>
     </header>
     <!-- You'll need to mess around with the CSS of #camera (found in css/style.css) to get it to work.
         More explanation in that CSS rule. -->
@@ -259,6 +260,38 @@
             </svg>
         </div>
     </aside>
+    <div id="auto" style="display: none;">
+        <table>
+            <tbody>
+                <tr id="defenses">
+                    <td>
+                        <img class="defense" src="img/auto/lowbar.png" id="lowBarImg">
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr id="robots">
+                    <td>
+                        <img class="autobot">
+                    </td>
+                    <td>
+                        <img class="autobot">
+                    </td>
+                    <td>
+                        <img class="autobot">
+                    </td>
+                    <td>
+                        <img class="autobot">
+                    </td>
+                    <td>
+                        <img class="autobot">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <script src="/networktables/networktables.js"></script>
     <script src="ui.js"></script>
 </body>

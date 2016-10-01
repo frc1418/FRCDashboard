@@ -32,3 +32,9 @@ aside svg * {
 #camera {
     background-color: #eee;
 }
+.arrow-up {
+    border-bottom-color: #333;
+}
+.arrow-down {
+    border-top-color: #333;
+}

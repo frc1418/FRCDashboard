@@ -26,3 +26,9 @@ aside svg * {
 input[type="checkbox"] {
     -webkit-filter: hue-rotate(150deg) saturate(2);
 }
+.arrow-up {
+    border-bottom-color: #fe3131;
+}
+.arrow-down {
+    border-top-color: #fe3131;
+}
