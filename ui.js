@@ -73,11 +73,7 @@ function onRobotConnection(connected) {
 
 function onValueChanged(key, value, isNew) {
 	// Sometimes, NetworkTables will pass booleans as strings. This corrects for that.
-	if (value == 'true') {
-		value = true;
-	} else if (value == 'false') {
-		value = false;
-	}
+	if (value === 'true' || value === 'false') value = !!value;
 
 	// This switch statement chooses which UI element to update when a NetworkTables variable changes.
 	switch (key) {
