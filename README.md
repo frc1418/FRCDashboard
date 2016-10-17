@@ -18,23 +18,6 @@ If you're going to be using the preferred method of using the dashboard (as an a
 * Electron (to install, `cd` into dashboard directory and run `npm install`)
 
 ## Running
-1. Connect to your robot's network. (If you're just testing the dashboard and don't currently need to use it with the robot, you can skip this step.)
-2. Start dashboard server.
-
-    Windows:
-
-        py -3 installer.py download-opkg mjpg-streamer
-        py -3 installer.py install-opkg mjpg-streamer
-
-    Mac/Linux (using bash):
-
-        python3 installer.py download-opkg mjpg-streamer
-        python3 installer.py install-opkg mjpg-streamer
-
-3. Update `style.css` to use the IP of your live camera feed. Usually this is something like `roborio-XXXX-frc.local:5800/?action=stream`, where `XXXX` is your team's number.
-
-
-## Running
 1. Connect to your robot's network if you haven't already. (If you're just testing the dashboard and don't currently need to use it with your robot, you can skip this step.)
 2. If you are able to use node/npm, use the section below labeled "Using dashboard as Application." If not, use the section titled "Using dashboard through web browser."
 
